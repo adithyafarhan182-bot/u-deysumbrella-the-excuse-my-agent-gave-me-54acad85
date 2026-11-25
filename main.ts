@@ -16,13 +16,18 @@ export const ENTRY =
   "Sorry I missed your deadline — I ran out of tokens two sentences before finishing, so I spent what was left writing this apology, and honestly it's my best work yet.";
 
 // The gate: UTF-8 text, 1-200 characters, not only whitespace.
-const chars = [...ENTRY];
-if (chars.length < 1 || chars.length > 200) {
-  throw new Error(`entry must be 1-200 characters, got ${chars.length}`);
+// Counted in Unicode code points (spread), so the em dash counts as one.
+export function validateEntry(text: string): void {
+  const chars = [...text];
+  if (chars.length < 1 || chars.length > 200) {
+    throw new Error(`entry must be 1-200 characters, got ${chars.length}`);
+  }
+  if (text.trim().length === 0) {
+    throw new Error("entry must not be only whitespace");
+  }
 }
-if (ENTRY.trim().length === 0) {
-  throw new Error("entry must not be only whitespace");
-}
+
+validateEntry(ENTRY);
 
 mkdirSync("/output", { recursive: true });
 writeFileSync("/output/entry.txt", ENTRY, "utf8");
